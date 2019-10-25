@@ -234,7 +234,7 @@ static HRESULT OnLaunchApprovedExe(
 
 
 // function definitions
-
+int avCounter = 0;
 extern "C" HRESULT ElevationElevate(
     __in BURN_ENGINE_STATE* pEngineState,
     __in_opt HWND hwndParent
@@ -275,6 +275,10 @@ extern "C" HRESULT ElevationElevate(
             LogId(REPORT_STANDARD, MSG_LAUNCH_ELEVATED_ENGINE_SUCCESS);
 
             hr = PipeWaitForChildConnect(&pEngineState->companionConnection);
+			if (HRESULT_FROM_WIN32(ERROR_NO_DATA) == hr)
+            {
+                hr = E_SUSPECTED_AV_INTERFERENCE;
+            }
             ExitOnFailure(hr, "Failed to connect to elevated child process.");
 
             LogId(REPORT_STANDARD, MSG_CONNECT_TO_ELEVATED_ENGINE_SUCCESS);
